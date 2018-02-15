@@ -29,7 +29,6 @@ playerEditPage model playerId =
       text ""
     RemoteData.Loading ->
       text "Loading ..."
-
     RemoteData.Success players ->
       let
           maybePlayer =

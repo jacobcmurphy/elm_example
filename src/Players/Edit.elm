@@ -3,6 +3,7 @@ module Players.Edit exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, value, href)
 import Html.Events exposing (onClick)
+import Link
 import Msgs exposing (Msg)
 import Models exposing (Player)
 import Routing exposing (playersPath)
@@ -61,7 +62,7 @@ listBtn : Html Msg
 listBtn =
   a
     [ class "btn regular"
-    , href playersPath
+    , Link.onLinkClick (Msgs.ChangeLocation playersPath)
     ]
     [ i [ class "fa fa-chevron-left mr1" ] [], text "List" ]
 

@@ -1,7 +1,8 @@
 module Players.List exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (class)
+import Link
 import Msgs exposing (Msg)
 import Models exposing (Player)
 import RemoteData exposing (WebData)
@@ -66,7 +67,7 @@ editBtn player =
   in
       a 
         [ class "btn regular"
-        , href path
+        , Link.onLinkClick (Msgs.ChangeLocation path)
         ]
         [ i [ class "fa fa-pencil mr1" ] [], text "Edit" ]
 

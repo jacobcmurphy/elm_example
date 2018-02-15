@@ -3,6 +3,7 @@ module Update exposing (..)
 import Commands exposing (savePlayerCmd)
 import Msgs exposing (Msg)
 import Models exposing (Model, Player)
+import Navigation
 import RemoteData
 import Routing exposing(parseLocation)
 
@@ -17,6 +18,8 @@ update msg model =
             parseLocation location
       in
           ( { model | route = newRoute }, Cmd.none)
+    Msgs.ChangeLocation path ->
+      ( model, Navigation.newUrl path )
     Msgs.ChangeLevel player howMuch ->
       let
           updatedPlayer =
@@ -25,7 +28,7 @@ update msg model =
           ( model, savePlayerCmd updatedPlayer )
     Msgs.OnPlayerSave (Ok player) ->
       ( updatePlayer model player, Cmd.none)
-    Msgs.OnPlayerSave (Err erro) ->
+    Msgs.OnPlayerSave (Err error) ->
       ( model, Cmd.none)
 
 updatePlayer : Model -> Player -> Model
