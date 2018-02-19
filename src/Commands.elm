@@ -5,12 +5,17 @@ import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Json.Encode as Encode
 import Msgs exposing (Msg)
-import Models exposing (PlayerId, Player)
+import Models exposing (PlayerId, Player, NewPlayer)
 import RemoteData
 
 savePlayerUrl : PlayerId -> String
 savePlayerUrl playerId =
   "http://localhost:4000/players/" ++ playerId
+
+savePlayerCmd : Player -> Cmd Msg
+savePlayerCmd player =
+  savePlayerRequest player
+    |> Http.send Msgs.OnPlayerSave
 
 savePlayerRequest : Player -> Http.Request Player
 savePlayerRequest player =
@@ -24,11 +29,6 @@ savePlayerRequest player =
     , withCredentials = False
     }
 
-savePlayerCmd : Player -> Cmd Msg
-savePlayerCmd player =
-  savePlayerRequest player
-    |> Http.send Msgs.OnPlayerSave
-
 playerEncoder : Player -> Encode.Value
 playerEncoder player =
   let
@@ -39,6 +39,34 @@ playerEncoder player =
         ]
   in
       Encode.object attributes
+
+createPlayerCmd : NewPlayer -> Cmd Msg
+createPlayerCmd newPlayer =
+  createPlayerRequest newPlayer
+    |> Http.send Msgs.OnPlayerCreate
+
+createPlayerRequest : NewPlayer -> Http.Request Player
+createPlayerRequest newPlayer =
+  Http.request
+    { body = newPlayerEncoder newPlayer |> Http.jsonBody
+    , expect = Http.expectJson playerDecoder
+    , headers = []
+    , method = "POST"
+    , timeout = Nothing
+    , url = "http://localhost:4000/players"
+    , withCredentials = False
+    }
+
+newPlayerEncoder : NewPlayer -> Encode.Value
+newPlayerEncoder newPlayer =
+  let
+      attributes =
+        [ ("name", Encode.string newPlayer.name)
+        , ("level", Encode.int newPlayer.level)
+        ]
+  in
+      Encode.object attributes
+
 
 fetchPlayers : Cmd Msg
 fetchPlayers =

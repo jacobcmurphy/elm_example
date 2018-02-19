@@ -1,7 +1,7 @@
 module Msgs exposing (..)
 
 import Http
-import Models exposing (Player)
+import Models exposing (Player, NewPlayer)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
 
@@ -10,6 +10,10 @@ type Msg
   | OnLocationChange Location
   | ChangeLocation String
   | ChangeLevel Player Int
+  | ChangeName Player String
   | OnPlayerSave (Result Http.Error Player)
+  | AddPlayer NewPlayer String
+  | CreatePlayer NewPlayer
+  | OnPlayerCreate (Result Http.Error Player)
 
 

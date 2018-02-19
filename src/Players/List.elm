@@ -5,6 +5,7 @@ import Html.Attributes exposing (class)
 import Link
 import Msgs exposing (Msg)
 import Models exposing (Player)
+import Players.Navbar exposing (nav)
 import RemoteData exposing (WebData)
 import Routing exposing (playerPath)
 
@@ -12,14 +13,9 @@ import Routing exposing (playerPath)
 view : WebData (List Player) -> Html Msg
 view response = 
   div []
-      [ nav
+      [ Players.Navbar.nav
       , maybeList response
      ]
-
-nav : Html Msg
-nav =
-  div [ class "clearfix mb2 white bg-black" ]
-      [ div [class "left p2"] [text "Players"] ]
 
 maybeList : WebData (List Player) -> Html Msg
 maybeList response =
