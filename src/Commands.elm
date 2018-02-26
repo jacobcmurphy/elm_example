@@ -8,8 +8,8 @@ import Msgs exposing (Msg)
 import Models exposing (PlayerId, Player, NewPlayer)
 import RemoteData
 
-savePlayerUrl : PlayerId -> String
-savePlayerUrl playerId =
+playerUrl : PlayerId -> String
+playerUrl playerId =
   "http://localhost:4000/players/" ++ playerId
 
 savePlayerCmd : Player -> Cmd Msg
@@ -25,7 +25,7 @@ savePlayerRequest player =
     , headers = []
     , method = "PATCH"
     , timeout = Nothing
-    , url = savePlayerUrl player.id
+    , url = playerUrl player.id
     , withCredentials = False
     }
 
@@ -67,6 +67,22 @@ newPlayerEncoder newPlayer =
   in
       Encode.object attributes
 
+deletePlayerCmd : Player -> Cmd Msg
+deletePlayerCmd player =
+  let 
+    request = Http.request
+      { body = Http.emptyBody
+      -- , expect = Ok player |> always >> Http.expectStringResponse
+      , expect =  Http.expectStringResponse << always <| Ok player
+      -- , expect = Http.expectStringResponse (\x -> Ok player)
+      , headers =[]
+      , method = "DELETE"
+      , timeout = Nothing
+      , url = playerUrl player.id
+      , withCredentials = False
+      }
+  in
+    Http.send Msgs.OnPlayerDelete request
 
 fetchPlayers : Cmd Msg
 fetchPlayers =

@@ -1,11 +1,11 @@
 module Update exposing (..)
 
-import Commands exposing (savePlayerCmd, createPlayerCmd)
+import Commands exposing (savePlayerCmd, createPlayerCmd, deletePlayerCmd)
 import Msgs exposing (Msg)
 import Models exposing (Model, Player, NewPlayer)
 import Navigation
 import RemoteData
-import Routing exposing(parseLocation)
+import Routing exposing(parseLocation, playersPath)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -13,11 +13,7 @@ update msg model =
     Msgs.OnFetchPlayers response ->
       ( { model | players = response }, Cmd.none )
     Msgs.OnLocationChange location ->
-      let
-          newRoute =
-            parseLocation location
-      in
-          ( { model | route = newRoute }, Cmd.none)
+      ( { model | route = parseLocation location }, Cmd.none)
     Msgs.ChangeLocation path ->
       ( model, Navigation.newUrl path )
     Msgs.ChangeLevel player howMuch ->
@@ -25,12 +21,18 @@ update msg model =
           updatedPlayer =
             { player | level = player.level + howMuch }
       in
-          ( model, savePlayerCmd updatedPlayer )
+          ( updatePlayer model updatedPlayer, Cmd.none )
     Msgs.ChangeName player newName ->
-      let updatePlayer =
+      let updatedPlayer =
         { player | name = newName }
       in
-        ( model, savePlayerCmd updatePlayer )
+        ( updatePlayer model updatedPlayer, Cmd.none )
+    Msgs.SavePlayer player ->
+      ( model , savePlayerCmd player )
+    Msgs.OnPlayerSave (Ok player) ->
+      ( model, Navigation.newUrl playersPath )
+    Msgs.OnPlayerSave (Err error) ->
+      ( model, Cmd.none)
     Msgs.AddPlayer newPlayer playerName ->
       let newPlayer =
         { name = playerName, level = 0 } 
@@ -39,39 +41,48 @@ update msg model =
     Msgs.CreatePlayer newPlayer ->
       ( model, createPlayerCmd newPlayer )
     Msgs.OnPlayerCreate (Ok player) ->
-      ( addCreatedPlayer model player, Cmd.none)
+      ( addCreatedPlayer model player, Navigation.newUrl playersPath)
     Msgs.OnPlayerCreate (Err error) ->
       ( model, Cmd.none )
-    Msgs.OnPlayerSave (Ok player) ->
-      ( updatePlayer model player, Cmd.none)
-    Msgs.OnPlayerSave (Err error) ->
-      ( model, Cmd.none)
+    Msgs.DeletePlayer player ->
+      ( model, deletePlayerCmd player)
+    Msgs.OnPlayerDelete (Ok player) ->
+      ( removePlayer model player, Navigation.newUrl playersPath )
+    Msgs.OnPlayerDelete (Err error) ->
+      ( model, Cmd.none )
 
 addCreatedPlayer : Model -> Player -> Model
 addCreatedPlayer model createdPlayer =
   let
       addPlayerToList players =
         List.append players [createdPlayer]
-
-      newPlayerList =
+      playerList =
         RemoteData.map addPlayerToList model.players
   in
-      { model | players = newPlayerList }
+      { model | players = playerList }
+
+removePlayer : Model -> Player -> Model
+removePlayer model player =
+  let
+    removePlayerFromList players =
+      players
+        |> List.filter (\p -> p.id /= player.id)
+    playerList =
+      RemoteData.map removePlayerFromList model.players
+  in
+    { model | players = playerList}
 
 updatePlayer : Model -> Player -> Model
 updatePlayer model updatedPlayer =
   let
-      pick currentPlayer =
-        if updatedPlayer.id == currentPlayer.id then
-          updatedPlayer
-        else
-          currentPlayer
-
-      updatePlayerList players =
-        List.map pick players
-
-      updatePlayers =
-        RemoteData.map updatePlayerList model.players
-
+    pick currentPlayer =
+      if updatedPlayer.id == currentPlayer.id then
+        updatedPlayer
+      else
+        currentPlayer
+    updatePlayerList players =
+      List.map pick players
+    playerList =
+      RemoteData.map updatePlayerList model.players
   in
-      { model | players = updatePlayers }
+      { model | players = playerList }

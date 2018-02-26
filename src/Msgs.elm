@@ -11,9 +11,12 @@ type Msg
   | ChangeLocation String
   | ChangeLevel Player Int
   | ChangeName Player String
+  | SavePlayer Player
   | OnPlayerSave (Result Http.Error Player)
   | AddPlayer NewPlayer String
   | CreatePlayer NewPlayer
   | OnPlayerCreate (Result Http.Error Player)
+  | DeletePlayer Player
+  | OnPlayerDelete (Result Http.Error Player)
 
 

@@ -1,34 +1,29 @@
 {
   "players": [
     {
-      "id": "1",
-      "name": "Sally",
-      "level": 3
-    },
-    {
-      "id": "2",
-      "name": "Lance",
-      "level": 12
-    },
-    {
       "id": "3",
-      "name": "Aki",
-      "level": 3
+      "name": "Ariel",
+      "level": 7
     },
     {
       "id": "4",
-      "name": "Maria",
+      "name": "Mario",
       "level": 9
     },
     {
       "id": "5",
       "name": "Julian",
-      "level": 6
+      "level": 12
     },
     {
       "id": "6",
       "name": "Jaime",
       "level": 3
+    },
+    {
+      "name": "JCrains",
+      "level": 69,
+      "id": "Bk6LcnovG"
     }
   ]
 }

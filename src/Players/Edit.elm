@@ -12,6 +12,7 @@ view player =
   div []
       [ Players.Navbar.nav
       , form player
+      , deleteButton player
       ]
 
 form : Player -> Html Msg
@@ -20,6 +21,7 @@ form player =
       [ h1 [] [ text player.name ]
       , changeName player
       , formLevel player
+      , savePlayer player 
       ]
 
 formLevel : Player -> Html Msg
@@ -59,3 +61,23 @@ btnLevelIncrease player =
   in 
     a [ class "btn ml1 h1", onClick message ]
       [ i [ class "fa fa-plus-circle" ] [] ]
+
+savePlayer : Player -> Html Msg
+savePlayer player =
+  let message =
+    Msgs.SavePlayer player
+  in
+    button
+      [ onClick message ]
+      [ text "SAVE"]  
+
+deleteButton : Player -> Html Msg
+deleteButton player =
+  let message =
+    Msgs.DeletePlayer player
+  in
+    button
+      [ onClick message ]
+      [ text "DELETE"]
+            
+
